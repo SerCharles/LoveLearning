@@ -1,6 +1,7 @@
 from utils import *
 from data import *
 import pandas as pd
+import time
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -30,18 +31,30 @@ def train_test(args, x_train, y_train, x_test, y_test):
     '''
     model = AdaBoostClassifier(DecisionTreeClassifier(max_depth = args.max_depth, min_samples_split = args.min_samples_split, min_samples_leaf = args.min_samples_leaf),
                          n_estimators = args.n_estimators, learning_rate = args.learning_rate, random_state = args.seed)
+    
+    start_time = time.time()
     model.fit(x_train, y_train)
+    end_time = time.time()
+    time_train = end_time - start_time
+
     print("Train Accuracy: {:.4}%".format(100 * model.score(x_train, y_train)))
     print("Test Accuracy: {:.4}%".format(100 * model.score(x_test, y_test)))
-    return model
+    
+    start_time = time.time()
+    y_result = model.predict(x_test)
+    end_time = time.time()
+    time_test = end_time - start_time
+    print("Train Time: {:.4}s".format(time_train))
+    print("Test Time: {:.4}s".format(time_test))
 
-def output_result(args, x_test, y_test, model):
+    return model, y_result
+
+def output_result(args, y_test, y_result):
     '''
     描述：输出结果到csv
-    参数：全局参数，测试x，测试y，模型
+    参数：全局参数，测试y(ground truth)，结果y
     返回：无
     '''
-    y_result = model.predict(x_test)
     uid = []
     for i in range(len(y_test['match'])):
         uid.append(i)
@@ -64,5 +77,5 @@ if __name__ == '__main__':
     train_data = load_data(args, 'train')
     test_data = load_data(args, 'test')
     x_train, y_train, x_test, y_test = handle_data(args, train_data, test_data)
-    model = train_test(args, x_train, y_train, x_test, y_test)
-    output_result(args, x_test, y_test, model)
+    model, y_result = train_test(args, x_train, y_train, x_test, y_test)
+    output_result(args, y_test, y_result)
