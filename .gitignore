@@ -6,7 +6,7 @@ __pycache__/
 *\.DS_Store
 
 *.data
-
+/result
 # Compiled class file
 *.class
 
