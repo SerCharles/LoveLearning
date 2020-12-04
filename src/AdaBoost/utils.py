@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import logging
+
 
 def init_args():
     '''
@@ -26,6 +28,7 @@ def init_args():
     parser.add_argument("--ground_truth_name", type = str, default = 'ground_truth.csv', help = "The file name of ground truth")
     parser.add_argument("--result_name", type = str, default = 'result.csv', help = "The file name of result")
     parser.add_argument("--grid_search_name", type = str, default = 'grid_search.csv', help = "The file name of result")
+    parser.add_argument("--log_name", type = str, default = 'log.log', help = "The file name of result")
 
     #是否输出测试结果和显示可视化结果，0否1是
     parser.add_argument('--test', type = int, default = 0)
@@ -40,7 +43,7 @@ def init_args():
     parser.add_argument("--min_samples_leaf", type = int, default = 5)
     parser.add_argument("--n_estimators", type = int, default = 200)
     parser.add_argument("--learning_rate", type = float, default = 0.8)
-
+    
     args = parser.parse_args()
 
     #计算得到文件位置
@@ -50,8 +53,39 @@ def init_args():
     args.ground_truth_place = os.path.join(args.result_dir, args.ground_truth_name)
     args.result_place = os.path.join(args.result_dir, args.result_name)
     args.ground_truth_place = os.path.join(args.result_dir, args.ground_truth_name)
-
+    args.log_place = os.path.join(args.result_dir, args.log_name)
     return args
+
+def init_logging(args):
+    '''
+    描述：创建logging
+    参数：全局参数
+    返回：logger
+    '''
+    # 创建Logger
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    # 创建Handler
+
+    # 终端Handler
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setLevel(logging.DEBUG)
+
+    # 文件Handler
+    fileHandler = logging.FileHandler(args.log_place, mode = 'w', encoding = 'UTF-8')
+    fileHandler.setLevel(logging.NOTSET)
+
+    # Formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    consoleHandler.setFormatter(formatter)
+    fileHandler.setFormatter(formatter)
+
+    # 添加到Logger中
+    logger.addHandler(consoleHandler)
+    logger.addHandler(fileHandler)
+    return logger
+
 
 def get_useless_columns():
     '''

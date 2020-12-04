@@ -5,6 +5,7 @@ import time
 import re
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
+import logging
 
 def output_result(args, y_result):
     '''
@@ -23,20 +24,20 @@ def output_result(args, y_result):
     
     result_df.to_csv(args.grid_search_place, index = False)
 
-def train_test(args, x_train, y_train, x_test, y_test, max_depth, min_samples_split, min_samples_leaf, n_estimators, learning_rate):
+def train_test(args, logger, x_train, y_train, x_test, y_test, max_depth, min_samples_split, min_samples_leaf, n_estimators, learning_rate):
     '''
     描述：训练-测试模型
-    参数：全局参数，清洗后的数据x_train, y_train, x_test, y_test, adaboost模型的超参数若干
+    参数：全局参数，logger, 清洗后的数据x_train, y_train, x_test, y_test, adaboost模型的超参数若干
     返回：model, y_result(测试结果), train_accuracy, test_accuracy, train_time, test_time
     '''
-    print("*" * 100)
-    print("Current Features:", x_train.columns)
-    print("Current Hyper Parameters:")
-    print("Decision Tree Max Depth:", max_depth)
-    print("Decision Tree Min Samples Split:", min_samples_split)
-    print("Decision Tree Min Samples Leaf:", min_samples_leaf)
-    print("Adaboost Estimators:", n_estimators)
-    print("Adaboost Learning Rate:", learning_rate)
+    logger.debug("*" * 100)
+    logger.debug("Current Features: " + str(x_train.columns))
+    logger.debug("Current Hyper Parameters: ")
+    logger.debug("Decision Tree Max Depth: " + str(max_depth))
+    logger.debug("Decision Tree Min Samples Split: " + str(min_samples_split))
+    logger.debug("Decision Tree Min Samples Leaf: " + str(min_samples_leaf))
+    logger.debug("Adaboost Estimators: " + str(n_estimators))
+    logger.debug("Adaboost Learning Rate: " + str(learning_rate))
 
     model = AdaBoostClassifier(DecisionTreeClassifier(max_depth = max_depth, min_samples_split = min_samples_split, min_samples_leaf = min_samples_leaf),
                          n_estimators = n_estimators, learning_rate = learning_rate, random_state = args.seed)
@@ -53,10 +54,10 @@ def train_test(args, x_train, y_train, x_test, y_test, max_depth, min_samples_sp
     train_accuracy = 100 * model.score(x_train, y_train)
     test_accuracy = 100 * model.score(x_test, y_test)
 
-    print("Train Accuracy: {:.4}%".format(train_accuracy))
-    print("Test Accuracy: {:.4}%".format(test_accuracy))
-    print("Train Time: {:.4}s".format(train_time))
-    print("Test Time: {:.4}s".format(test_time))
+    logger.debug("Train Accuracy: {:.4}%".format(train_accuracy))
+    logger.debug("Test Accuracy: {:.4}%".format(test_accuracy))
+    logger.debug("Train Time: {:.4}s".format(train_time))
+    logger.debug("Test Time: {:.4}s".format(test_time))
 
     return model, y_result, train_accuracy, test_accuracy, train_time, test_time
 
@@ -72,25 +73,25 @@ def update_best_dictionary(model, result, features, train_accuracy, test_accurac
         'max_depth': max_depth, 'min_samples_split': min_samples_split, 'min_samples_leaf': min_samples_leaf, 'n_estimators': n_estimators, 'learning_rate': learning_rate}
     return best_dictionary
 
-def print_best_dictionary(best_dictionary):
+def print_best_dictionary(logger, best_dictionary):
     '''
     描述：打印最佳情况
-    参数：最佳情况
+    参数：logger, 最佳情况
     返回：无
     '''
-    print("*" * 100)
-    print("The Best Model:")
-    print("Train Accuracy: {:.4}%".format(best_dictionary['train_accuracy']))
-    print("Test Accuracy: {:.4}%".format(best_dictionary['test_accuracy']))
-    print("Train Time: {:.4}s".format(best_dictionary['train_time']))
-    print("Test Time: {:.4}s".format(best_dictionary['test_time']))
-    print("Current Features:", best_dictionary['features'])
-    print("Current Hyper Parameters:")
-    print("Decision Tree Max Depth:", best_dictionary['max_depth'])
-    print("Decision Tree Min Samples Split:", best_dictionary['min_samples_split'])
-    print("Decision Tree Min Samples Leaf:", best_dictionary['min_samples_leaf'])
-    print("Adaboost Estimators:", best_dictionary['n_estimators'])
-    print("Adaboost Learning Rate:", best_dictionary['learning_rate'])
+    logger.debug("*" * 100)
+    logger.debug("The Best Model:")
+    logger.debug("Train Accuracy: {:.4}%".format(best_dictionary['train_accuracy']))
+    logger.debug("Test Accuracy: {:.4}%".format(best_dictionary['test_accuracy']))
+    logger.debug("Train Time: {:.4}s".format(best_dictionary['train_time']))
+    logger.debug("Test Time: {:.4}s".format(best_dictionary['test_time']))
+    logger.debug("Current Features:" + str(best_dictionary['features']))
+    logger.debug("Current Hyper Parameters: ")
+    logger.debug("Decision Tree Max Depth: " + str(best_dictionary['max_depth']))
+    logger.debug("Decision Tree Min Samples Split: " + str(best_dictionary['min_samples_split']))
+    logger.debug("Decision Tree Min Samples Leaf: " + str(best_dictionary['min_samples_leaf']))
+    logger.debug("Adaboost Estimators: " + str(best_dictionary['n_estimators']))
+    logger.debug("Adaboost Learning Rate: " + str(best_dictionary['learning_rate']))
 
 def remove_feature(features, base_feature):
     '''
@@ -201,6 +202,7 @@ def grid_search():
 
     #读取数据，做必要处理
     args = init_args()
+    logger = init_logging(args)
     train_data = load_data(args, 'train')
     test_data = load_data(args, 'test')
     test_data = get_test_data_ground_truth(args, test_data)
@@ -232,14 +234,14 @@ def grid_search():
                         for feature_id in feature_ids:
                             x_train, y_train, x_test, y_test = handle_data(args, feature_id, train_data, test_data)
                             model, result, train_accuracy, test_accuracy, train_time, test_time = \
-                                train_test(args, x_train, y_train, x_test, y_test, max_depth, min_samples_split, min_samples_leaf, n_estimators, learning_rate)
+                                train_test(args, logger, x_train, y_train, x_test, y_test, max_depth, min_samples_split, min_samples_leaf, n_estimators, learning_rate)
                             if test_accuracy > best_acc:
                                 best_acc = test_accuracy
                                 features = x_train.columns
                                 best_dictionary = update_best_dictionary(model, result, features, train_accuracy, test_accuracy, train_time, test_time, \
                                     max_depth, min_samples_split, min_samples_leaf, n_estimators, learning_rate)
     #打印和输出最优模型  
-    print_best_dictionary(best_dictionary)
+    print_best_dictionary(logger, best_dictionary)
     output_result(args, best_dictionary['result'])
 
 
