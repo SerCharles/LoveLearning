@@ -85,14 +85,35 @@ def filt_correleation(args, data):
         plt.show()
     return data
 
+def get_test_data_ground_truth(args, test_data):
+    '''
+    描述：计算出test数据的ground truth
+    参数：全局参数，测试数据
+    返回：测试数据
+    '''
+    #先求出test data的match
+    test_data['match'] = (test_data['dec'] & test_data['dec_o'])
+    if args.test:
+        print(test_data)
+    return test_data
+
+def filt_data(args, data, columns):
+    '''
+    描述：提取特征的部分列
+    参数：全局参数，数据，选取的列
+    返回：选取的数据
+    '''
+    data = data[columns]
+    if args.test:
+        print(data)
+    return data
+
 def filt_test_data(args, train_data, test_data):
     '''
     描述：根据训练数据处理方式，处理测试数据
     参数：全局参数，训练数据，测试数据
     返回：测试数据
     '''
-    #先求出test data的match
-    test_data['match'] = (test_data['dec'] & test_data['dec_o'])
     columns = train_data.columns
     test_data = test_data[columns]
     if args.test:
@@ -115,3 +136,4 @@ def fill_loss_data(args, data):
         print("filled data:")
         print(data)
     return data
+

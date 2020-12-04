@@ -25,6 +25,7 @@ def init_args():
     parser.add_argument("--result_dir", type = str, default = os.path.join('..', '..', 'result'), help = "The directory of results")
     parser.add_argument("--ground_truth_name", type = str, default = 'ground_truth.csv', help = "The file name of ground truth")
     parser.add_argument("--result_name", type = str, default = 'result.csv', help = "The file name of result")
+    parser.add_argument("--grid_search_name", type = str, default = 'grid_search.csv', help = "The file name of result")
 
     #是否输出测试结果和显示可视化结果，0否1是
     parser.add_argument('--test', type = int, default = 0)
@@ -48,6 +49,8 @@ def init_args():
     args.data_place_submit = os.path.join(args.data_dir, args.data_name_submit)
     args.ground_truth_place = os.path.join(args.result_dir, args.ground_truth_name)
     args.result_place = os.path.join(args.result_dir, args.result_name)
+    args.ground_truth_place = os.path.join(args.result_dir, args.ground_truth_name)
+
     return args
 
 def get_useless_columns():

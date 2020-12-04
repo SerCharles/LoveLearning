@@ -11,7 +11,9 @@ def handle_data(args, train_data, test_data):
     参数：全局参数，训练数据, 测试数据
     返回：清洗后的数据x_train, y_train, x_test, y_test
     '''
+    test_data = get_test_data_ground_truth(args, test_data)
     train_data = remove_useless_feature(args, train_data)
+    test_data = remove_useless_feature(args, test_data)
     train_data = remove_loss_feature(args, train_data)
     train_data = filt_correleation(args, train_data)
     train_data = fill_loss_data(args, train_data)
@@ -27,25 +29,27 @@ def train_test(args, x_train, y_train, x_test, y_test):
     '''
     描述：训练-测试模型
     参数：全局参数，清洗后的数据x_train, y_train, x_test, y_test
-    返回：模型
+    返回：模型，结果
     '''
     model = AdaBoostClassifier(DecisionTreeClassifier(max_depth = args.max_depth, min_samples_split = args.min_samples_split, min_samples_leaf = args.min_samples_leaf),
-                         n_estimators = args.n_estimators, learning_rate = args.learning_rate, random_state = args.seed)
-    
+                    n_estimators = args.n_estimators, learning_rate = args.learning_rate, random_state = args.seed)
+
     start_time = time.time()
     model.fit(x_train, y_train)
     end_time = time.time()
-    time_train = end_time - start_time
-
-    print("Train Accuracy: {:.4}%".format(100 * model.score(x_train, y_train)))
-    print("Test Accuracy: {:.4}%".format(100 * model.score(x_test, y_test)))
+    train_time = end_time - start_time
     
     start_time = time.time()
     y_result = model.predict(x_test)
     end_time = time.time()
-    time_test = end_time - start_time
-    print("Train Time: {:.4}s".format(time_train))
-    print("Test Time: {:.4}s".format(time_test))
+    test_time = end_time - start_time
+
+    train_accuracy = 100 * model.score(x_train, y_train)
+    test_accuracy = 100 * model.score(x_test, y_test)
+    print("Train Accuracy: {:.4}%".format(train_accuracy))
+    print("Test Accuracy: {:.4}%".format(test_accuracy))
+    print("Train Time: {:.4}s".format(train_time))
+    print("Test Time: {:.4}s".format(test_time))
 
     return model, y_result
 
