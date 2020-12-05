@@ -38,11 +38,11 @@ def init_args():
     parser.add_argument("--corr_removal_threshold", type = float, default = 0.1)
     
     #算法参数
-    parser.add_argument("--max_depth", type = int, default = 2)
-    parser.add_argument("--min_samples_split", type = int, default = 20)
-    parser.add_argument("--min_samples_leaf", type = int, default = 5)
+    parser.add_argument("--max_depth", type = int, default = 1)
+    parser.add_argument("--min_samples_split", type = int, default = 5)
+    parser.add_argument("--min_samples_leaf", type = int, default = 20)
     parser.add_argument("--n_estimators", type = int, default = 200)
-    parser.add_argument("--learning_rate", type = float, default = 0.8)
+    parser.add_argument("--learning_rate", type = float, default = 0.5)
     
     args = parser.parse_args()
 
@@ -52,7 +52,7 @@ def init_args():
     args.data_place_submit = os.path.join(args.data_dir, args.data_name_submit)
     args.ground_truth_place = os.path.join(args.result_dir, args.ground_truth_name)
     args.result_place = os.path.join(args.result_dir, args.result_name)
-    args.ground_truth_place = os.path.join(args.result_dir, args.ground_truth_name)
+    args.grid_search_place = os.path.join(args.result_dir, args.grid_search_name)
     args.log_place = os.path.join(args.result_dir, args.log_name)
     return args
 

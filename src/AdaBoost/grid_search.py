@@ -14,7 +14,7 @@ def output_result(args, y_result):
     返回：无
     '''
     uid = []
-    for i in range(len(y_test['match'])):
+    for i in range(len(y_result)):
         uid.append(i)
 
     result_df = pd.DataFrame({
@@ -247,4 +247,3 @@ def grid_search():
 
 if __name__ == '__main__':
     grid_search()
-    
