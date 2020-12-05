@@ -193,15 +193,14 @@ def handle_data(args, feature_id, train_data, test_data):
     return x_train, y_train, x_test, y_test
 
 
-def grid_search():
+def grid_search(args):
     '''
     描述：全局搜索主函数
-    参数：无
+    参数：全局参数
     返回：无
     '''
 
     #读取数据，做必要处理
-    args = init_args()
     logger = init_logging(args)
     train_data = load_data(args, 'train')
     test_data = load_data(args, 'test')
@@ -244,6 +243,32 @@ def grid_search():
     print_best_dictionary(logger, best_dictionary)
     output_result(args, best_dictionary['result'])
 
+def run_best(args):
+    '''
+    描述：复现最优结果
+    参数：全局参数
+    返回：无
+    '''
+    logger = init_logging(args)
+    train_data = load_data(args, 'train')
+    test_data = load_data(args, 'test')
+    test_data = get_test_data_ground_truth(args, test_data)
+    train_data = remove_useless_feature(args, train_data)
+    test_data = remove_useless_feature(args, test_data)
+    feature_id = 5
+    max_depth = 1
+    min_samples_split = 5
+    min_samples_leaf = 20
+    n_estimators = 200
+    learning_rate = 0.5
+    x_train, y_train, x_test, y_test = handle_data(args, feature_id, train_data, test_data)
+    model, result, train_accuracy, test_accuracy, train_time, test_time = \
+        train_test(args, logger, x_train, y_train, x_test, y_test, max_depth, min_samples_split, min_samples_leaf, n_estimators, learning_rate)
+                            
 
 if __name__ == '__main__':
-    grid_search()
+    args = init_args()
+    if not args.best:
+        grid_search(args)
+    else: 
+        run_best(args)

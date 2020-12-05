@@ -44,6 +44,9 @@ def init_args():
     parser.add_argument("--n_estimators", type = int, default = 200)
     parser.add_argument("--learning_rate", type = float, default = 0.5)
     
+    #是否复现最优结果
+    parser.add_argument("--best", type = int, default = 0)
+
     args = parser.parse_args()
 
     #计算得到文件位置
