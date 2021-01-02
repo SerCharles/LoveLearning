@@ -29,8 +29,14 @@ def read_test_data():
 
 
 def calc_validation_accurcy(model, X_train, y_train, X_test, y_test):
+    import time
+    t0 = time.time()
     model.fit(X_train, y_train)
+    t1 = time.time()
+    print("fit time cost: ", t1 - t0)
     predict_test_lrc = model.predict(X_test)
+    t2 = time.time()
+    print("predict time cost: ", t2 - t1)
     validate_accuracy = skl.metrics.accuracy_score(y_test, predict_test_lrc)
     print('Validation Accuracy:', validate_accuracy)
 

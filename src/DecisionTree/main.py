@@ -10,7 +10,7 @@ def main():
 
     data, test_data = missing_handle(data, test_data)
     data, test_data = do_vectorizer(data, test_data)
-    # data, test_data = feature_select(data, test_data)
+    data, test_data = feature_select(data, test_data)
 
     print('-------------test data-------------', test_data)
 
@@ -19,6 +19,7 @@ def main():
     best_params4 = {'criterion': 'entropy', 'max_depth': 3, 'splitter': 'random', 'min_samples_split': 2,
                     'min_samples_leaf': 8, 'min_weight_fraction_leaf': 0, 'random_state': 233,
                     'min_impurity_decrease': 0}
+
     run_model(data, tree.DecisionTreeClassifier(**best_params4))
 
     clf = tree.DecisionTreeClassifier(**best_params4)
