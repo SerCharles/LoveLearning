@@ -92,7 +92,7 @@ def get_test_data_ground_truth(args, test_data):
     返回：测试数据
     '''
     #先求出test data的match
-    test_data['match'] = (test_data['dec'] & test_data['dec_o'])
+    test_data['match'] = (test_data['dec'].astype("bool") & test_data['dec_o'].astype("bool"))
     if args.test:
         print(test_data)
     return test_data

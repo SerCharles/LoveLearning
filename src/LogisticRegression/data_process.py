@@ -32,7 +32,7 @@ def get_ground_truth(data):
     :param data: 全局参数，测试数据
     :return: 测试数据
     """
-    data['match'] = (data['dec'] & data['dec_o'])
+    data['match'] = (data['dec'].astype("bool") & data['dec_o'].astype("bool"))
     return data
 
 

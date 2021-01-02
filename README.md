@@ -12,6 +12,7 @@
 - matplotlib==3.3.0
 - seaborn==0.11.0
 - scikit_learn==0.23.2
+- graphviz==0.16
 
 ### 3.运行方法：
 
