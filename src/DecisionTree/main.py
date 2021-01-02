@@ -1,4 +1,5 @@
 from utils import *
+import graphviz
 
 
 def main():
@@ -39,8 +40,6 @@ def main():
         'min_samples_split': [2, 4, 8, 16],
         'min_samples_leaf': [1, 2, 4, 8, 16],
         'min_weight_fraction_leaf': [0, 0.1, 0.2, 0.3],
-        # 'min_weight_fraction_leaf': [0],
-        # 'max_features': ['log2'],
         'random_state': [0, 233, None],
         'min_impurity_decrease': [0, 0.1, 0.2, 0.3],
     }

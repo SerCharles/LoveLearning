@@ -4,7 +4,6 @@ import sklearn.tree as tree
 import numpy as np
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_extraction import DictVectorizer
-import graphviz
 
 def missing(data: pd.DataFrame):
     """
